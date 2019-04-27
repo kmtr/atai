@@ -1,4 +1,4 @@
-# Atai (値)
+# Atai (値) [![CircleCI](https://circleci.com/gh/kmtr/atai.svg?style=svg)](https://circleci.com/gh/kmtr/atai)
 
 Atai is a getting value library.
 
