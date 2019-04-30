@@ -31,12 +31,26 @@ yourValueProvider := ValueProvider(func() string {
 
 `Value` is very simple. Its returns a argument of its.
 
+```go
+fmt.Print(Value("val")()) // val 
+```
+
 ### ValueFromEnv (ValueFromEnvWithDefault)
 
 `ValueFromEnv` is for getting value from environment variables.
 `ValueFromEnvWithDefault` is for too and this can be set default value.
 
+```go
+os.Setenv("VALUE", "env val")
+fmt.Print(ValueFromEnv("VALUE")()) // env val 
+```
 ### ValueFromFlag
 
 `ValueFromFlag` is for getting value from command line argument with `flag` package.
 
+```go
+flag.String("value", "", "command line argument --value")
+flag.Set("value", "flag val")
+flag.Parse()
+fmt.Print(ValueFromFlag("value")()) // flag val
+```
