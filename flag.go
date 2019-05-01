@@ -15,3 +15,27 @@ func ValueFromFlag(name string) ValueProvider {
 		return fmt.Sprint(f.Value)
 	}
 }
+
+type FlagValue struct {
+	key string
+	vp  ValueProvider
+}
+
+func NewFlagValue(key string) *FlagValue {
+	return &FlagValue{
+		key: key,
+		vp:  ValueFromFlag(key),
+	}
+}
+
+func (fv *FlagValue) Key() string {
+	return fv.key
+}
+
+func (fv *FlagValue) Value() string {
+	return fv.vp()
+}
+
+func (fv *FlagValue) DefValue() string {
+	return flag.Lookup(fv.key).DefValue
+}
