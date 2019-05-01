@@ -9,3 +9,19 @@ func Value(v string) ValueProvider {
 		return v
 	}
 }
+
+type ValueProviderHolder interface {
+	ValueProvider() ValueProvider
+}
+
+type KeyHolder interface {
+	Key() string
+}
+
+type DefaultValueHolder interface {
+	DefValue() string
+}
+
+type Explainer interface {
+	Explain() string
+}

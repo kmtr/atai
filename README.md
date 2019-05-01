@@ -11,46 +11,90 @@ Atai is a wrapper of these function.
 ### ValueProvider
 
 ValueProvider is the core concept of this library.
-Its definition is very simple.
+It is a type alias of the function (`func() string`).
+It can make abstraction that getting a value.
+
+Sample
 
 ```go
-type ValueProvider func() string
+package main
+
+import (
+	"database/sql"
+	"database/sql/driver"
+	"flag"
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/kmtr/atai"
+)
+
+var db *sql.DB
+
+type DummyDB struct{}
+
+func (db *DummyDB) Open(name string) (driver.Conn, error) {
+	return nil, fmt.Errorf("DummyDB: open with `%s`", name)
+}
+
+func initialize(dbconn atai.ValueProvider) (err error) {
+	sql.Register("dummydb", &DummyDB{})
+	db, err = sql.Open("dummydb", dbconn())
+	return
+}
+
+func main() {
+	flag.String("db-conn", "", "Database connection string")
+	flag.Parse()
+
+	mvp := atai.MultipleValueProvider(
+		atai.ValueFromFlag("db-conn"),
+		atai.ValueFromEnv("DB_CONN"),
+		atai.Value("default connection string"),
+	)
+	if err := initialize(mvp); err != nil {
+		log.Printf("error: %v", err)
+		os.Exit(1)
+	}
+	log.Printf("info: %v", db.Ping())
+}
 ```
 
-Atai package has some types of ValueProvider.
-However it is easy to make your ValueProvider.
-For example.
+### interface (ValueProviderHolder, KeyHolder, DefaultValueHolder, Explainer)
+
+They are utility interfaces for using ValueProvider.
+
+Sample
 
 ```go
-yourValueProvider := ValueProvider(func() string {
-    return "This is my ValueProvider"
-})
-```
+package main
 
-### Value
+import (
+	"flag"
+	"fmt"
 
-`Value` is very simple. Its returns a argument of its.
+	"github.com/kmtr/atai"
+)
 
-```go
-fmt.Print(Value("val")()) // val 
-```
+type KeyHolderAndExplainer interface {
+	atai.KeyHolder
+	atai.Explainer
+}
 
-### ValueFromEnv (ValueFromEnvWithDefault)
+func explain(vals ...KeyHolderAndExplainer) {
+	for i, val := range vals {
+		fmt.Printf("%d: %s, %s\n", i+1, val.Key(), val.Explain())
+	}
+}
 
-`ValueFromEnv` is for getting value from environment variables.
-`ValueFromEnvWithDefault` is for too and this can be set default value.
+func main() {
+	flag.String("db-conn", "", "Database connection string")
+	flag.Parse()
 
-```go
-os.Setenv("VALUE", "env val")
-fmt.Print(ValueFromEnv("VALUE")()) // env val 
-```
-### ValueFromFlag
+	fv := atai.NewFlagValue("db-conn")
+	ev := atai.NewEnvValue("DB_CONN", "Database connection string")
 
-`ValueFromFlag` is for getting value from command line argument with `flag` package.
-
-```go
-flag.String("value", "", "command line argument --value")
-flag.Set("value", "flag val")
-flag.Parse()
-fmt.Print(ValueFromFlag("value")()) // flag val
+	explain(fv, ev)
+}
 ```
