@@ -70,7 +70,7 @@ func TestEnvValue(t *testing.T) {
 			ev := NewEnvValue(test.key, test.explain)
 
 			var _ KeyHolder = ev
-			var _ ValueHolder = ev
+			var _ ValueProviderHolder = ev
 			var _ Explainer = ev
 			var _ DefaultValueHolder = ev
 
@@ -80,7 +80,7 @@ func TestEnvValue(t *testing.T) {
 				t.Errorf("want: %s, got: %s", want, got)
 			}
 
-			want, got = test.value, ev.Value()
+			want, got = test.value, ev.ValueProvider()()
 			if got != want {
 				t.Errorf("want: %s, got: %s", want, got)
 			}
@@ -101,7 +101,7 @@ func TestEnvValue(t *testing.T) {
 				t.Errorf("want: %s, got: %s", want, got)
 			}
 
-			want, got = test.value, ev.Value()
+			want, got = test.value, ev.ValueProvider()()
 			if got != want {
 				t.Errorf("want: %s, got: %s", want, got)
 			}
@@ -119,7 +119,7 @@ func TestEnvValue(t *testing.T) {
 			os.Unsetenv(test.key)
 
 			// if the env is unset, Value() returns defValue
-			want, got = test.defValue, ev.Value()
+			want, got = test.defValue, ev.ValueProvider()()
 			if got != want {
 				t.Errorf("want: %s, got: %s", want, got)
 			}

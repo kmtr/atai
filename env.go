@@ -49,8 +49,8 @@ func (ev *EnvValue) Key() string {
 	return ev.key
 }
 
-func (ev *EnvValue) Value() string {
-	return ev.vp()
+func (ev *EnvValue) ValueProvider() ValueProvider {
+	return ev.vp
 }
 
 func (ev *EnvValue) DefValue() string {

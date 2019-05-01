@@ -10,8 +10,8 @@ func Value(v string) ValueProvider {
 	}
 }
 
-type ValueHolder interface {
-	Value() string
+type ValueProviderHolder interface {
+	ValueProvider() ValueProvider
 }
 
 type KeyHolder interface {

@@ -32,8 +32,8 @@ func (fv *FlagValue) Key() string {
 	return fv.key
 }
 
-func (fv *FlagValue) Value() string {
-	return fv.vp()
+func (fv *FlagValue) ValueProvider() ValueProvider {
+	return fv.vp
 }
 
 func (fv *FlagValue) DefValue() string {

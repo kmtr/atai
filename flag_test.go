@@ -65,7 +65,7 @@ func TestFlagValue(t *testing.T) {
 			fv := NewFlagValue(test.key)
 
 			var _ KeyHolder = fv
-			var _ ValueHolder = fv
+			var _ ValueProviderHolder = fv
 			var _ Explainer = fv
 			var _ DefaultValueHolder = fv
 
@@ -75,7 +75,7 @@ func TestFlagValue(t *testing.T) {
 				t.Errorf("want: %s, got: %s", want, got)
 			}
 
-			want, got = test.value, fv.Value()
+			want, got = test.value, fv.ValueProvider()()
 			if got != want {
 				t.Errorf("want: %s, got: %s", want, got)
 			}
