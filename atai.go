@@ -21,3 +21,7 @@ type KeyHolder interface {
 type DefaultValueHolder interface {
 	DefValue() string
 }
+
+type Explainer interface {
+	Explain() string
+}

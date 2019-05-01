@@ -39,3 +39,7 @@ func (fv *FlagValue) Value() string {
 func (fv *FlagValue) DefValue() string {
 	return flag.Lookup(fv.key).DefValue
 }
+
+func (fv *FlagValue) Explain() string {
+	return flag.Lookup(fv.key).Usage
+}

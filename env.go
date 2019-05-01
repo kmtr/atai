@@ -28,17 +28,19 @@ func ValueFromEnvWithDefault(envName, defValue string) ValueProvider {
 type EnvValue struct {
 	key      string
 	vp       ValueProvider
+	explain  string
 	defValue string
 }
 
-func NewEnvValue(key string) *EnvValue {
-	return NewEnvValueWithDefault(key, "")
+func NewEnvValue(key, explain string) *EnvValue {
+	return NewEnvValueWithDefault(key, explain, "")
 }
 
-func NewEnvValueWithDefault(key, defValue string) *EnvValue {
+func NewEnvValueWithDefault(key, explain, defValue string) *EnvValue {
 	return &EnvValue{
 		key:      key,
 		vp:       ValueFromEnvWithDefault(key, defValue),
+		explain:  explain,
 		defValue: defValue,
 	}
 }
@@ -53,4 +55,8 @@ func (ev *EnvValue) Value() string {
 
 func (ev *EnvValue) DefValue() string {
 	return ev.defValue
+}
+
+func (ev *EnvValue) Explain() string {
+	return ev.explain
 }

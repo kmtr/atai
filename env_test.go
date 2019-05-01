@@ -51,6 +51,7 @@ func TestEnvValue(t *testing.T) {
 	type testarg struct {
 		key      string
 		value    string
+		explain  string
 		defValue string
 	}
 
@@ -58,6 +59,7 @@ func TestEnvValue(t *testing.T) {
 		testarg{
 			key:      "key1",
 			value:    "val1",
+			explain:  "test value",
 			defValue: "def1",
 		},
 	}
@@ -65,33 +67,61 @@ func TestEnvValue(t *testing.T) {
 	for i, test := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			os.Setenv(test.key, test.value)
-			ev := NewEnvValue(test.key)
+			ev := NewEnvValue(test.key, test.explain)
 
 			var _ KeyHolder = ev
 			var _ ValueHolder = ev
+			var _ Explainer = ev
 			var _ DefaultValueHolder = ev
 
-			if ev.Key() != test.key {
-				t.Errorf("want: %s, got: %s", test.key, ev.Key())
-			}
-			if ev.Value() != test.value {
-				t.Errorf("want: %s, got: %s", test.value, ev.Value())
-			}
-			if ev.DefValue() != "" {
-				t.Errorf("want: %s, got: %s", "", ev.DefValue())
+			var want, got string
+			want, got = test.key, ev.Key()
+			if got != want {
+				t.Errorf("want: %s, got: %s", want, got)
 			}
 
-			ev = NewEnvValueWithDefault(test.key, test.defValue)
-			if ev.Key() != test.key {
-				t.Errorf("want: %s, got: %s", test.key, ev.Key())
+			want, got = test.value, ev.Value()
+			if got != want {
+				t.Errorf("want: %s, got: %s", want, got)
 			}
-			if ev.Value() != test.value {
-				t.Errorf("want: %s, got: %s", test.value, ev.Value())
+
+			want, got = "", ev.DefValue()
+			if got != want {
+				t.Errorf("want: %s, got: %s", want, got)
+			}
+
+			want, got = test.explain, ev.Explain()
+			if got != want {
+				t.Errorf("want: %s, got: %s", want, got)
+			}
+
+			ev = NewEnvValueWithDefault(test.key, test.explain, test.defValue)
+			want, got = test.key, ev.Key()
+			if got != want {
+				t.Errorf("want: %s, got: %s", want, got)
+			}
+
+			want, got = test.value, ev.Value()
+			if got != want {
+				t.Errorf("want: %s, got: %s", want, got)
+			}
+
+			want, got = test.explain, ev.Explain()
+			if got != want {
+				t.Errorf("want: %s, got: %s", want, got)
+			}
+
+			want, got = test.defValue, ev.DefValue()
+			if got != want {
+				t.Errorf("want: %s, got: %s", want, got)
 			}
 
 			os.Unsetenv(test.key)
-			if ev.DefValue() != test.defValue {
-				t.Errorf("want: %s, got: %s", test.defValue, ev.DefValue())
+
+			// if the env is unset, Value() returns defValue
+			want, got = test.defValue, ev.Value()
+			if got != want {
+				t.Errorf("want: %s, got: %s", want, got)
 			}
 		})
 	}
