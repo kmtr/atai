@@ -7,7 +7,7 @@ jobs:
     working_directory: /go/src/github.com/kmtr/atai
     steps:
       - checkout
-      - run: go build
+      - run: go vet
       - run:
           name: "Create a temp directory for artifacts"
           command: |
