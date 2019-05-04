@@ -21,6 +21,10 @@ func TestMultipleValue(t *testing.T) {
 			providers: []ValueProvider{},
 			want:      "",
 		},
+		{
+			providers: nil,
+			want:      "",
+		},
 	}
 
 	for _, test := range tests {
